@@ -151,7 +151,7 @@ namespace BLL.BPC.Analytics
 					foreach (var statFile in this.StatFiles)
 					{
 						// Table for storing repeating data if needed
-						var reapeatingDataTable = new DataTable();
+						var repeatingDataTable = new DataTable();
 						foreach (var statVariable in statFile.StatVariables.Where(v => v.Question != null))
 						{
 							if (statFile.FirstStatVariable)
@@ -186,21 +186,21 @@ namespace BLL.BPC.Analytics
 										continue;
 									}
 
-									if (!reapeatingDataTable.Columns.Contains(statVariable.Name))
+									if (!repeatingDataTable.Columns.Contains(statVariable.Name))
 									{
-										reapeatingDataTable.Columns.Add(statVariable.Name, typeof(Models.Response));
+										repeatingDataTable.Columns.Add(statVariable.Name, typeof(Models.Response));
 									}
-									while (reapeatingDataTable.Rows.Count < repeatingResponse.Instance)
+									while (repeatingDataTable.Rows.Count < repeatingResponse.Instance)
 									{
-										reapeatingDataTable.Rows.Add(reapeatingDataTable.NewRow());
+										repeatingDataTable.Rows.Add(repeatingDataTable.NewRow());
 									}
-									reapeatingDataTable.Rows[repeatingResponse.Instance - 1][statVariable.Name] = repeatingResponse;
+									repeatingDataTable.Rows[repeatingResponse.Instance - 1][statVariable.Name] = repeatingResponse;
 								}
 							}
 						}
 
 						// Write repeating response data
-						for (int i = 0; i < reapeatingDataTable.Rows.Count; i++)
+						for (int i = 0; i < repeatingDataTable.Rows.Count; i++)
 						{
 							statFile.Writer.WriteLine();
 							statFile.FirstStatVariable = true;
@@ -230,9 +230,9 @@ namespace BLL.BPC.Analytics
 									statFile.Writer.Write(",");
 								}
 
-								if (reapeatingDataTable.Columns.Contains(statVariable.Name))
+								if (repeatingDataTable.Columns.Contains(statVariable.Name))
 								{
-									var repeatingResponse = reapeatingDataTable.Rows[i][statVariable.Name] as Models.Response;
+									var repeatingResponse = repeatingDataTable.Rows[i][statVariable.Name] as Models.Response;
 									this.WriteQuestionData(statFile.Writer, repeatingResponse.GenerateEnumerable(), statVariable);
 								}
 								else if (!statVariable.Question.SurveySection.IsRepeating)
